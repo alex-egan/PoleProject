@@ -28,6 +28,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="IronXL">
+      <HintPath>..\packages\IronXL.Excel.2020.12.2\lib\net45\IronXL.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
