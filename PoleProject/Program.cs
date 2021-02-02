@@ -6,7 +6,7 @@ namespace PoleProject
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Wassup Biotch");
         }
     }
 }
