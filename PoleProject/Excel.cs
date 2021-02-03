@@ -1,6 +1,5 @@
 ﻿using System;
 using IronXL;
-using System.Data;
 
 namespace PoleProject
 {
