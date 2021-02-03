@@ -7,6 +7,10 @@ namespace PoleProject
         public static void Main(string[] args)
         {
             Console.WriteLine("Oh fuck");
+            Functions functions = new Functions();
+            functions.randomStatement();
+
+            functions.randomStatement();
         }
     }
 }
