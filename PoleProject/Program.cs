@@ -50,6 +50,8 @@ namespace PoleProject
             //Runs the calculations for the Regression Values
             functs.calculateRegressionValues(northings, elevations);
 
+          
+
 
         }
     }
