@@ -10,10 +10,6 @@ namespace PoleProject
             //Excel excelFile = new Excel();
             //string fileName = @"Values.xlsx";
 
-            //Testing List Output
-            List<double> trial = new List<double> { 123.4 };
-            Console.WriteLine(trial.Count);
-
 
             //Creating Lists of Practice Values (Since Excel Import isn't working)
             List<double> northings = new List<double> { 26680370.87,
