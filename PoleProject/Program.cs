@@ -10,6 +10,7 @@ namespace PoleProject
             //Excel excelFile = new Excel();
             //string fileName = @"Values.xlsx";
 
+            List<double> revealValues = new List<double>();
 
             //Creating Lists of Practice Values (Since Excel Import isn't working)
             List<double> northings = new List<double> { 26680370.87,
@@ -47,11 +48,14 @@ namespace PoleProject
             Functions functs = new Functions(northings, elevations);
 
 
-            //Runs the calculations for the Regression Values
-            functs.calculateRegressionValues(northings, elevations);
+            //Runs Calculations for the Regression Values and Tests Them
+            revealValues = functs.calculateAndTestRevealValues(northings, elevations);
 
-          
-
+            //Prints out all the Regression Values
+            for (int i = 0; i < northings.Count; i++)
+            {
+                Console.WriteLine("The " + Convert.ToString(i) + " Value is: " + Convert.ToString(revealValues[i]));
+            }
 
         }
     }
