@@ -54,6 +54,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Functions.cs" />
     <Compile Include="Excel.cs" />
+    <Compile Include="ExcelPractice.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

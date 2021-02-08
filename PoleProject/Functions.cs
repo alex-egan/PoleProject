@@ -6,11 +6,11 @@ namespace PoleProject
 {
     public class Functions
     {
-        double sumOfNorthings = 0;
+        double sumOfStations = 0;
         double sumOfElevations = 0;
-        double sumOfNorthingsTimesElevations = 0;
-        double sumOfNorthingsSquared = 0;
-        double sumOfSquaredNorthings = 0;
+        double sumOfStationsTimesElevations = 0;
+        double sumOfStationsSquared = 0;
+        double sumOfSquaredStations = 0;
 
         public Functions(List<double> northings, List<double> elevations)
         {
@@ -18,23 +18,30 @@ namespace PoleProject
             List<double> elevationValues = elevations;
         }
 
-        public void randomStatement()
+        //Calculate Station Values and put them in a list
+        public List<double> calculateStations(List<double> northings)
         {
-            Console.WriteLine("Yo.");
+            List<double> stations = new List<double>();
+            stations.Add(0);
+
+            for (int i = 1; i < northings.Count; i++)
+            {
+                stations.Add((northings[i - 1] - northings[i]) + stations[i - 1]);
+                Console.WriteLine(stations[i]);
+            }
+
+            return stations;
         }
 
         //Calculates Sum of Northing Values
-        public void sumAllNorthings(List<double> northings)
+        public void sumAllStations(List<double> stations)
         {
-            Console.WriteLine("Inside of sumAllNorthings: " + Convert.ToString(northings[0]));
-
-            for (int i = 0; i < northings.Count; i++)
+            for (int i = 0; i < stations.Count; i++)
             {
-                sumOfNorthings += northings[i];
-                Console.WriteLine(Convert.ToString(i) + ": " + Convert.ToString(sumOfNorthings));
+                sumOfStations += stations[i];
             }
 
-            Console.WriteLine("Sum of Northings: " + Convert.ToString(sumOfNorthings));
+            Console.WriteLine("Sum of Stations: " + Convert.ToString(sumOfStations));
         }
 
         //Calculates Sum of Elevation Values
@@ -50,37 +57,37 @@ namespace PoleProject
         }
 
         //Calculates the Sum of Northing Values Times Elevation Values
-        public void sumNorthingsTimesElevations(List<double> northings, List<double> elevations)
+        public void sumNorthingsTimesElevations(List<double> stations, List<double> elevations)
         {
-            
 
-            for (int i = 0; i < northings.Count; i++)
+
+            for (int i = 0; i < stations.Count; i++)
             {
-                sumOfNorthingsTimesElevations += northings[i] * elevations[i];
+                sumOfStationsTimesElevations += stations[i] * elevations[i];
             }
 
-            Console.WriteLine("Sum of Northings Times Elevations: " + Convert.ToString(sumOfNorthingsTimesElevations));
+            Console.WriteLine("Sum of Northings Times Elevations: " + Convert.ToString(sumOfStationsTimesElevations));
         }
 
         //Calculates (Sum of Northing Values)^2
-        public void sumNorthingsSquared(double sumOfNorthings)
+        public void sumNorthingsSquared(double sumOfStations)
         {
 
-            sumOfNorthingsSquared = sumOfNorthings * sumOfNorthings;
+            sumOfStationsSquared = sumOfStations * sumOfStations;
 
-            Console.WriteLine("Sum of Northings Squared: " + Convert.ToString(sumOfNorthingsSquared));
+            Console.WriteLine("Sum of Northings Squared: " + Convert.ToString(sumOfStationsSquared));
         }
 
         //Calculates Sum of (Northing Values^2)
-        public void sumSquaredNorthings(List<double> northings)
+        public void sumSquaredNorthings(List<double> stations)
         {
 
-            for (int i = 0; i < northings.Count; i++)
+            for (int i = 0; i < stations.Count; i++)
             {
-                sumOfSquaredNorthings += (northings[i] * northings[i]);
+                sumOfSquaredStations += (stations[i] * stations[i]);
             }
 
-            Console.WriteLine("Sum of Squared Northings: " + Convert.ToString(sumOfSquaredNorthings));
+            Console.WriteLine("Sum of Squared Northings: " + Convert.ToString(sumOfSquaredStations));
         }
 
         //Runs all Calculations needed to find Regression Line Values
@@ -92,21 +99,37 @@ namespace PoleProject
             int rowCount = northings.Count;
             Console.WriteLine("Row Count: " + Convert.ToString(rowCount));
 
-            sumAllNorthings(northings);
+            List<double> stations = calculateStations(northings);
+
+            sumAllStations(stations);
             sumAllElevations(elevations);
-            sumNorthingsTimesElevations(northings, elevations);
-            sumNorthingsSquared(sumOfNorthings);
-            sumSquaredNorthings(northings);
+            sumNorthingsTimesElevations(stations, elevations);
+            sumNorthingsSquared(sumOfStations);
+            sumSquaredNorthings(stations);
 
 
             // Calculate 'a' value
-            slope = ((rowCount * sumOfNorthingsTimesElevations) - (sumOfNorthings * sumOfElevations)) / ((rowCount * sumOfSquaredNorthings) - sumOfNorthingsSquared);
-            yInt = (sumOfElevations - (slope * sumOfNorthings)) / (rowCount);
+            slope = ((rowCount * sumOfStationsTimesElevations) - (sumOfStations * sumOfElevations)) / ((rowCount * sumOfSquaredStations) - sumOfStationsSquared);
+            yInt = (sumOfElevations - (slope * sumOfStations)) / (rowCount);
 
             Console.WriteLine(slope);
             Console.WriteLine(yInt);
-
-            //Giving Wrong Values.. What is wrong?
         }
+
+        //How to keep max value:
+
+
+        //double maxResidual = -100000000;
+        //List<double> residuals = new List<double>;
+
+            //for (int i = 0; i<stations.Count; i++)
+            //{
+                //residuals[i] = predictedY[i] - elevations[i];
+
+                //if residuals[i] > maxResidual
+
+                    //maxResidual = residuals[i];
+
+            //}
     }
 }
