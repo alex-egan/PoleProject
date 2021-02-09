@@ -18,7 +18,8 @@ namespace PoleProject
         List<double> stationValues = new List<double>();
         List<double> predictedYValues = new List<double>();
         List<double> minRevealValues = new List<double>();
-
+        List<bool> checkGreaterThan49Inches = new List<bool>();
+        List<bool> checkLessThan60Inches = new List<bool>();
 
         public Functions(List<double> northings, List<double> elevations)
         {
@@ -166,27 +167,28 @@ namespace PoleProject
         //Calculates the Minimum Reveal Values by finding the High Points
         // Then adding the MINREVEAL Constant (49 inches) in feet.
         // Elevation is subtracted to find the actual Reveal Values.
-        public void calculateMinRevealValues(List<double> elevationValues, List<double> stationValues, double maxResidual, double yInt, double slope)
+        public List<double> calculateMinRevealValues(List<double> elevationValues, List<double> stationValues, double maxResidual, double yInt, double slope)
         {
             for (int i = 0; i < stationValues.Count; i++)
             {
                 minRevealValues.Add(((stationValues[i] * slope) + yInt + maxResidual + MINREVEAL) - elevationValues[i]);
                 //Console.WriteLine("minRevealValues: " + Convert.ToString(minRevealValues[i]));
             }
+
+            return minRevealValues;
         }
 
-
-        //Tests the Minimum Reveal Values to ensure they are all as high as possible
-        // While still being under the 60 Inch Maximum Pile Height Requirement
         public List<double> testMinRevealValues(List<double> minRevealValues)
         {
             List<double> testMinRevealValues = new List<double>();
             List<double> officialMinRevealValues = new List<double>();
+
             bool test = true;
             for (int i = 0; i < minRevealValues.Count; i++)
             {
                 testMinRevealValues.Add(minRevealValues[i]);
                 officialMinRevealValues.Add(0);
+                checkLessThan60Inches.Add(true);
             }
 
             while (test == true)
@@ -196,31 +198,59 @@ namespace PoleProject
                     if (testMinRevealValues[i] > MAXREVEAL)
                     {
                         test = false;
-                        //Console.WriteLine(Convert.ToString(testMinRevealValues[i]));
-                        break;
+                        //checkLessThan60Inches[i] = false;
                     }
+
+                    //else
+                    //{
+                        //checkLessThan60Inches[i] = true;
+                    //}
                 }
+
                 if (test == false)
                 {
                     break;
                 }
+
                 //Console.WriteLine(TESTCONSTANT);
                 for (int j = 0; j < minRevealValues.Count; j++)
                 {
                     officialMinRevealValues[j] = testMinRevealValues[j];
                     testMinRevealValues[j] += TESTCONSTANT;
+                    checkLessThan60Inches[j] = true;
+                }
+            }
+
+            for (int i = 0; i < officialMinRevealValues.Count; i++)
+            {
+                if (officialMinRevealValues[i] < MINREVEAL)
+                {
+                    checkGreaterThan49Inches.Add(false);
+                }
+                else
+                {
+                    checkGreaterThan49Inches.Add(true);
                 }
             }
 
             return officialMinRevealValues;
         }
-            
-            //return officialMinRevealValues;
+
+        public List<bool> checkUnder60Inches(List<double> officialMinRevealValues)
+        {
+            return checkLessThan60Inches;
+        }
+
+        public List<bool> checkAbove49Inches(List<double> officialMinRevealValues)
+        {
+            return checkGreaterThan49Inches;
+        }
 
         //Runs all functions and Returns the Official Reveal Values to Be Used
-        public List<double> calculateAndTestRevealValues(List<double> northings, List<double> elevations)
+        public List<double> calculateRevealValues(List<double> northings, List<double> elevations)
         {
-            List<double> returnRevealValues = new List<double>();
+            List<double> minRevealValues = new List<double>();
+            List<double> checkedRevealValues = new List<double>();
 
             calculateRegressionValues(northings, elevations);
 
@@ -228,13 +258,11 @@ namespace PoleProject
 
             double maxResidual = calculateResiduals(predictedYValues, elevations);
 
-            calculateMinRevealValues(elevations, stationValues, maxResidual, yInt, slope);
+            minRevealValues = calculateMinRevealValues(elevations, stationValues, maxResidual, yInt, slope);
 
-            returnRevealValues = testMinRevealValues(minRevealValues);
+            checkedRevealValues = testMinRevealValues(minRevealValues);
 
-            return returnRevealValues;
+            return checkedRevealValues;
         }
-
-
     }
 }

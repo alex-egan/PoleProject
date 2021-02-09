@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
+using OfficeOpenXml;
 
 namespace PoleProject
 {
@@ -7,10 +9,18 @@ namespace PoleProject
     {
         public static void Main(string[] args)
         {
-            //Excel excelFile = new Excel();
-            //string fileName = @"Values.xlsx";
 
+            int savedRow = 0;
+            string file = @"Values.xlsx";
             List<double> revealValues = new List<double>();
+            List<bool> above49BoolValues = new List<bool>();
+            List<bool> under60BoolValues = new List<bool>();
+
+            FileInfo fileInfo = new FileInfo(file);
+
+            //Excel excelFile = new Excel();
+
+            //excelFile.readExcelFile(fileInfo, savedRow);
 
             //Creating Lists of Practice Values (Since Excel Import isn't working)
             List<double> northings = new List<double> { 26680370.87,
@@ -49,12 +59,20 @@ namespace PoleProject
 
 
             //Runs Calculations for the Regression Values and Tests Them
-            revealValues = functs.calculateAndTestRevealValues(northings, elevations);
+            revealValues = functs.calculateRevealValues(northings, elevations);
+
+            above49BoolValues = functs.checkAbove49Inches(revealValues);
+
+            under60BoolValues = functs.checkUnder60Inches(revealValues);
 
             //Prints out all the Regression Values
             for (int i = 0; i < northings.Count; i++)
             {
+                Console.WriteLine("*******************************************************");
                 Console.WriteLine("The " + Convert.ToString(i) + " Value is: " + Convert.ToString(revealValues[i]));
+                Console.WriteLine("The Above 49 in value is: " + Convert.ToString(above49BoolValues[i]));
+                Console.WriteLine("The Under 60 in Value is: " + Convert.ToString(under60BoolValues[i]));
+
             }
 
         }

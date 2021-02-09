@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OfficeOpenXml;
 using IronXL;
 
 namespace PoleProject
@@ -10,8 +11,19 @@ namespace PoleProject
         {
             
         }
-        
-        public List<double> readExcelFile(string fileName, int savedRow)
+
+        public void readExcelFile(System.IO.FileInfo fileInfo, int savedRow)
+        {
+            ExcelPackage package = new ExcelPackage(fileInfo);
+            using (ExcelWorksheet worksheet = package.Workbook.Worksheets[1])
+            {
+                int colCount = worksheet.Dimension.End.Column;
+                int rowCount = worksheet.Dimension.End.Row;
+                Console.WriteLine(colCount);
+            }
+        }
+
+        public List<double> readExcelFilePractice(string fileName, int savedRow)
         {
             List<double> northings = new List<double>();
             List<double> elevations = new List<double>();
