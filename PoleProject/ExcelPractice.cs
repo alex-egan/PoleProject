@@ -1,6 +1,9 @@
 ﻿using System;
+using ExcelDataReader;
 using System.Collections.Generic;
 using IronXL;
+using System.IO;
+using System.Data;
 
 namespace PoleProject
 {
@@ -10,16 +13,30 @@ namespace PoleProject
         {
         }
 
-        public void readExcelFilePrac(string fileName)
+        public void readExcelFilePrac(string filePath)
         {
-            double value = 0;
+            FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
 
-            WorkBook workbook = WorkBook.Load(fileName);
-            WorkSheet sheet = workbook.DefaultWorkSheet;
+            //2. Reading from a OpenXml Excel file (2007 format; *.xlsx)
+            IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
 
-            value = Convert.ToDouble(sheet["A2"]);
+            //3. DataSet - The result of each spreadsheet will be created in the result.Tables
+            string result = Convert.ToString(excelReader.GetData(5));
 
-            Console.WriteLine(value);
+            Console.WriteLine(result);
+
+            //4. DataSet - Create column names from first row
+            //excelReader.IsFirstRowAsColumnNames = true;
+            //DataSet result = excelReader.AsDataSet();
+
+            //5. Data Reader methods
+            while (excelReader.Read())
+            {
+                //excelReader.GetInt32(0);
+            }
+
+            //6. Free resources (IExcelDataReader is IDisposable)
+            excelReader.Close();
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using OfficeOpenXml;
-using IronXL;
 
 namespace PoleProject
 {
@@ -12,44 +11,79 @@ namespace PoleProject
             
         }
 
-        public void readExcelFile(System.IO.FileInfo fileInfo, int savedRow)
+        public List<double> readEastings(System.IO.FileInfo fileInfo, int savedRow)
         {
+            List<double> eastings = new List<double>();
+
             ExcelPackage package = new ExcelPackage(fileInfo);
-            using (ExcelWorksheet worksheet = package.Workbook.Worksheets[1])
+            ExcelWorksheet worksheet = package.Workbook.Worksheets["Values"];
+
+            // get number of rows and columns in the sheet
+            int rows = worksheet.Dimension.Rows; // 20
+            int columns = worksheet.Dimension.Columns; // 7
+
+            //Console.WriteLine("*******************************");
+
+            // loop through the worksheet rows and columns
+            for (int i = 2; i < 15; i++)
             {
-                int colCount = worksheet.Dimension.End.Column;
-                int rowCount = worksheet.Dimension.End.Row;
-                Console.WriteLine(colCount);
+                double content = Convert.ToDouble(worksheet.Cells[i, 3].Value.ToString());
+                eastings.Add(content);
+                //Console.WriteLine(content);
+                //Console.WriteLine("*******************************");
             }
+
+            return eastings;
         }
 
-        public List<double> readExcelFilePractice(string fileName, int savedRow)
+        public List<double> readNorthings(System.IO.FileInfo fileInfo, int savedRow)
         {
             List<double> northings = new List<double>();
-            List<double> elevations = new List<double>();
 
-            WorkBook workbook = WorkBook.Load(fileName);
-            WorkSheet sheet = workbook.DefaultWorkSheet;
+            ExcelPackage package = new ExcelPackage(fileInfo);
+            ExcelWorksheet worksheet = package.Workbook.Worksheets["Values"];
 
-            // Make sure to use the savedRow integer here instead of "C2"
-            double easting = Convert.ToDouble(sheet["C2"]);
-            int rowCount = 3;
+            // get number of rows and columns in the sheet
+            int rows = worksheet.Dimension.Rows; // 20
+            int columns = worksheet.Dimension.Columns; // 7
 
-            while (Convert.ToDouble(sheet["C" + Convert.ToString(rowCount)]) == easting)
+            //Console.WriteLine("*******************************");
+
+            // loop through the worksheet rows and columns
+            for (int i = 2; i < 15; i++)
             {
-                northings.Add(Convert.ToDouble(sheet["B" + Convert.ToString(rowCount)]));
-                elevations.Add(Convert.ToDouble(sheet["D" + Convert.ToString(rowCount)]));
-                rowCount += 1;
+                double content = Convert.ToDouble(worksheet.Cells[i, 2].Value.ToString());
+                northings.Add(content);
+                //Console.WriteLine(content);
+                //Console.WriteLine("*******************************");
             }
 
-            savedRow = rowCount;
-            savedRow += 1;
-
-            Console.WriteLine(northings);
-            Console.WriteLine(elevations);
-
             return northings;
+        }
 
+        public List<double> readElevations(System.IO.FileInfo fileInfo, int savedRow)
+        {
+            List<double> elevations = new List<double>();
+
+            ExcelPackage package = new ExcelPackage(fileInfo);
+            ExcelWorksheet worksheet = package.Workbook.Worksheets["Values"];
+
+            // get number of rows and columns in the sheet
+            int rows = worksheet.Dimension.Rows; // 20
+            int columns = worksheet.Dimension.Columns; // 7
+
+            //Console.WriteLine("*******************************");
+
+            // loop through the worksheet rows and columns
+            for (int i = 2; i < 15; i++)
+            {
+                double content = Convert.ToDouble(worksheet.Cells[i, 4].Value.ToString());
+                elevations.Add(content);
+                //Console.WriteLine(content);
+                //Console.WriteLine("*******************************");
+            }
+
+            return elevations;
         }
     }
 }

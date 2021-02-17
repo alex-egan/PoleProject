@@ -113,7 +113,7 @@ namespace PoleProject
             int rowCount = northingValues.Count;
             //Console.WriteLine("Row Count: " + Convert.ToString(rowCount));
 
-            List<double> stationValues = calculateStations(northingValues);
+            stationValues = calculateStations(northingValues);
 
             sumAllStations(stationValues);
             sumAllElevations(elevationValues);
