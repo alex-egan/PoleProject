@@ -9,8 +9,8 @@ namespace PoleProject
     {
         public static void Main(string[] args)
         {
-            int savedRow = 0;
-            string fileName = @"Values.xlsx";
+            int savedRow = 1;
+            string fileName = @"Trial.xlsx";
             List<double> revealValues = new List<double>();
             List<bool> above49BoolValues = new List<bool>();
             List<bool> under60BoolValues = new List<bool>();
@@ -19,15 +19,15 @@ namespace PoleProject
 
             FileInfo fileInfo = new FileInfo(fileName);
 
-            List<double> eastings = excelFile.readEastings(fileInfo, savedRow);
-            List<double> northings = excelFile.readNorthings(fileInfo, savedRow);
-            List<double> elevations = excelFile.readElevations(fileInfo, savedRow);
+            int rowCount = excelFile.readEastings(fileInfo, savedRow);
+            List<double> northings = excelFile.readNorthings(fileInfo, rowCount, savedRow);
+            List<double> elevations = excelFile.readElevations(fileInfo, rowCount, savedRow);
 
             Console.WriteLine("****************************************");
 
-            for (int i = 0; i < eastings.Count; i++)
+            for (int i = 0; i < northings.Count; i++)
             {
-                Console.WriteLine(eastings[i]);
+                Console.WriteLine(rowCount);
                 Console.WriteLine(northings[i]);
                 Console.WriteLine(elevations[i]);
                 Console.WriteLine("****************************************");
@@ -53,6 +53,7 @@ namespace PoleProject
                 Console.WriteLine("The Under 60 in Value is: " + Convert.ToString(under60BoolValues[i]));
 
             }
+            excelFile.writeExcel(fileInfo, savedRow, rowCount, revealValues);
 
         }
     }
