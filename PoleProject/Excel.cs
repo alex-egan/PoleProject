@@ -123,9 +123,7 @@ namespace PoleProject
                 j++;
 
             }
-
-
-        }
         }
     }
+}
 

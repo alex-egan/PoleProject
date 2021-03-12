@@ -184,52 +184,60 @@ namespace PoleProject
             List<double> officialMinRevealValues = new List<double>();
 
             bool test = true;
+
             for (int i = 0; i < minRevealValues.Count; i++)
             {
                 testMinRevealValues.Add(minRevealValues[i]);
                 officialMinRevealValues.Add(0);
                 checkLessThan60Inches.Add(true);
+                checkGreaterThan49Inches.Add(true);
             }
 
             while (test == true)
             {
-                for (int i = 0; i < minRevealValues.Count; i++)
-                {
-                    if (testMinRevealValues[i] > MAXREVEAL)
-                    {
-                        test = false;
-                        checkLessThan60Inches[i] = false;
-                    }
+                int under49FalseCount = 0;
 
+                for (int i = 0; i < officialMinRevealValues.Count; i++)
+                {
+                    if (testMinRevealValues[i] < MINREVEAL)
+                    {
+                        checkGreaterThan49Inches[i] = false;
+                        under49FalseCount++;
+                    }
                     else
                     {
-                        checkLessThan60Inches[i] = true;
+                        checkGreaterThan49Inches[i] = true;
                     }
                 }
 
-                if (test == false)
+                if (under49FalseCount != 0)
                 {
-                    break;
+                    for (int i = 0; i < checkGreaterThan49Inches.Count; i++)
+                    {
+                        testMinRevealValues[i] += TESTCONSTANT;
+                    }
                 }
-
-                //Console.WriteLine(TESTCONSTANT);
-                for (int j = 0; j < minRevealValues.Count; j++)
+                else
                 {
-                    officialMinRevealValues[j] = testMinRevealValues[j];
-                    testMinRevealValues[j] += TESTCONSTANT;
-                    checkLessThan60Inches[j] = true;
+                    for (int i = 0; i < checkGreaterThan49Inches.Count; i++)
+                    {
+                        officialMinRevealValues[i] = testMinRevealValues[i];
+                    }
+
+                    break;
                 }
             }
 
             for (int i = 0; i < officialMinRevealValues.Count; i++)
             {
-                if (officialMinRevealValues[i] < MINREVEAL)
+                if (officialMinRevealValues[i] > MAXREVEAL)
                 {
-                    checkGreaterThan49Inches.Add(false);
+                    checkLessThan60Inches[i] = false;
                 }
+
                 else
                 {
-                    checkGreaterThan49Inches.Add(true);
+                    checkLessThan60Inches[i] = true;
                 }
             }
 
