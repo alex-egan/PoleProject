@@ -198,13 +198,13 @@ namespace PoleProject
                     if (testMinRevealValues[i] > MAXREVEAL)
                     {
                         test = false;
-                        //checkLessThan60Inches[i] = false;
+                        checkLessThan60Inches[i] = false;
                     }
 
-                    //else
-                    //{
-                        //checkLessThan60Inches[i] = true;
-                    //}
+                    else
+                    {
+                        checkLessThan60Inches[i] = true;
+                    }
                 }
 
                 if (test == false)
@@ -234,6 +234,26 @@ namespace PoleProject
             }
 
             return officialMinRevealValues;
+        }
+
+        public int numberOfFalses(List<bool> checkLessThan60Inches)
+        {
+            int falseCount = 0;
+
+            for (int i = 0; i < checkLessThan60Inches.Count; i++)
+            {
+                if (checkLessThan60Inches[i] == false)
+                {
+                    falseCount++;
+                }
+
+                else
+                {
+                    continue;
+                }
+            }
+
+            return falseCount;
         }
 
         public List<bool> checkUnder60Inches(List<double> officialMinRevealValues)

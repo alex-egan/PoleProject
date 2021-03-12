@@ -9,8 +9,9 @@ namespace PoleProject
     {
         public static void Main(string[] args)
         {
-            int savedRow = 1;
-            string fileName = @"Trial.xlsx";
+            int savedRow = 11;
+            string fileName = @"Block A-B-45-46 TOP.xlsx";
+            //string fileName = @"Values.xlsx";
             List<double> revealValues = new List<double>();
             List<bool> above49BoolValues = new List<bool>();
             List<bool> under60BoolValues = new List<bool>();
@@ -20,14 +21,15 @@ namespace PoleProject
             FileInfo fileInfo = new FileInfo(fileName);
 
             int rowCount = excelFile.readEastings(fileInfo, savedRow);
+            savedRow = excelFile.returnSavedRow(rowCount, savedRow);
             List<double> northings = excelFile.readNorthings(fileInfo, rowCount, savedRow);
             List<double> elevations = excelFile.readElevations(fileInfo, rowCount, savedRow);
 
             Console.WriteLine("****************************************");
-
+            
             for (int i = 0; i < northings.Count; i++)
             {
-                Console.WriteLine(rowCount);
+                Console.WriteLine(i);
                 Console.WriteLine(northings[i]);
                 Console.WriteLine(elevations[i]);
                 Console.WriteLine("****************************************");
