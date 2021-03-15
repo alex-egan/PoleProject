@@ -15,8 +15,8 @@ namespace PoleProject
         int EASTINGSCOLUMN = 3;
         int NORTHINGSCOLUMN = 2;
         int ELEVATIONSCOLUMN = 4;
-        string sheetName = "Sheet1";
-        //string sheetName = "Values";
+        //string sheetName = "Sheet1";
+        string sheetName = "Values";
 
         public int readEastings(System.IO.FileInfo fileInfo, int savedRow)
         {

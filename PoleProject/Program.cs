@@ -11,8 +11,8 @@ namespace PoleProject
         {
             int savedRow = 2;
             //string fileName = @"Block A-B-45-46 TOP.xlsx";
-            //string fileName = @"Values.xlsx";
-            string fileName = @"2B TOP.xlsx";
+            string fileName = @"Values.xlsx";
+            //string fileName = @"2B TOP.xlsx";
             List<double> revealValues = new List<double>();
             List<bool> above49BoolValues = new List<bool>();
             List<bool> under60BoolValues = new List<bool>();
@@ -68,9 +68,10 @@ namespace PoleProject
 
                     excelFile.writeExcel(fileInfo, savedRow, rowCount, revealValues);
                 }
-                catch
+                catch (Exception e)
                 {
                     run = false;
+                    Console.WriteLine(e.ToString());
                     break;
                 }
             }

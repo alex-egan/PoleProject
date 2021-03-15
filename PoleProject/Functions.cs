@@ -219,25 +219,41 @@ namespace PoleProject
                 }
                 else
                 {
-                    for (int i = 0; i < checkGreaterThan49Inches.Count; i++)
-                    {
-                        officialMinRevealValues[i] = testMinRevealValues[i];
-                    }
-
                     break;
                 }
             }
 
-            for (int i = 0; i < officialMinRevealValues.Count; i++)
+            test = true;
+
+            while (test)
             {
-                if (officialMinRevealValues[i] > MAXREVEAL)
+                int over60FalseCount = 0;
+
+                for (int i = 0; i < officialMinRevealValues.Count; i++)
                 {
-                    checkLessThan60Inches[i] = false;
+                    if (testMinRevealValues[i] > MAXREVEAL)
+                    {
+                        checkLessThan60Inches[i] = false;
+                        over60FalseCount++; ;
+                    }
+
+                    else
+                    {
+                        checkLessThan60Inches[i] = true;
+                    }
                 }
 
+                if (over60FalseCount != 0)
+                {
+                    break;
+                }
                 else
                 {
-                    checkLessThan60Inches[i] = true;
+                    for (int i = 0; i < checkGreaterThan49Inches.Count; i++)
+                    {
+                        officialMinRevealValues[i] = testMinRevealValues[i];
+                        testMinRevealValues[i] += TESTCONSTANT;
+                    }
                 }
             }
 
