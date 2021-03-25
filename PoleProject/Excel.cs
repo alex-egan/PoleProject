@@ -15,8 +15,18 @@ namespace PoleProject
         int EASTINGSCOLUMN = 3;
         int NORTHINGSCOLUMN = 2;
         int ELEVATIONSCOLUMN = 4;
+        //string sheetName = "Stantec OG Blocks 25-27 31 37";
         //string sheetName = "Sheet1";
-        string sheetName = "Values";
+        //string sheetName = "NewValues";
+        string sheetName = "NewValues";
+
+        public void insertColumns(FileInfo fileInfo)
+        {
+            ExcelPackage package = new ExcelPackage(fileInfo);
+            ExcelWorksheet worksheet = package.Workbook.Worksheets[sheetName];
+
+            worksheet.InsertColumn(8, 3);
+        }
 
         public int readEastings(System.IO.FileInfo fileInfo, int savedRow)
         {
@@ -111,18 +121,36 @@ namespace PoleProject
             return elevations;
         }
 
-        public void writeExcel(System.IO.FileInfo fileInfo, int savedRow, int rowCount, List<double> revealValues)
+        public void writeExcel(System.IO.FileInfo fileInfo, int savedRow, int rowCount, List<double> revealValues, List<bool> above49BoolValues, List<bool> under60BoolValues)
         {
             int row = savedRow - rowCount;
             int j = 0;
             ExcelPackage package = new ExcelPackage(fileInfo);
             ExcelWorksheet worksheet = package.Workbook.Worksheets[sheetName];
-            for (int i=row; i<rowCount; i++)
+            for (int i=row; i<savedRow; i++)
             { 
-                worksheet.Cells[i, 7].Value = revealValues[j];
+                worksheet.Cells[i, 8].Value = revealValues[j];
+                worksheet.Cells[i, 9].Value = above49BoolValues[j];
+                worksheet.Cells[i, 10].Value = under60BoolValues[j];
                 j++;
-
             }
+
+            package.Save();
+        }
+
+        public void addExcelLabels(FileInfo fileInfo, int savedRow)
+        {
+            ExcelPackage package = new ExcelPackage(fileInfo);
+            ExcelWorksheet worksheet = package.Workbook.Worksheets[sheetName];
+            worksheet.InsertRow(savedRow+1, 1);
+            worksheet.Cells[savedRow + 1, 1].Value = "PNTNO";
+            worksheet.Cells[savedRow + 1, 1].Value = "NORTHINGS";
+            worksheet.Cells[savedRow + 1, 1].Value = "EASTINGS";
+            worksheet.Cells[savedRow + 1, 1].Value = "ELEVATIONS";
+            worksheet.Cells[savedRow + 1, 1].Value = "DESCRIPTION";
+            worksheet.Cells[savedRow + 1, 8].Value = "Reveal Values";
+            worksheet.Cells[savedRow + 1, 9].Value = "Greater than 49 Inches";
+            worksheet.Cells[savedRow + 1, 10].Value = "Less than 60 Inches";
         }
     }
 }

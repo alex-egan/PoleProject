@@ -9,10 +9,13 @@ namespace PoleProject
     {
         public static void Main(string[] args)
         {
-            int savedRow = 2;
+            Console.WriteLine("///////////////////////////////////");
+            Console.WriteLine(DateTime.Now.ToString());
             //string fileName = @"Block A-B-45-46 TOP.xlsx";
-            string fileName = @"Values.xlsx";
+            //string fileName = @"TestMinReveals.xlsx";
             //string fileName = @"2B TOP.xlsx";
+            //string fileName = @"NewValues.xlsx";
+            string fileName = @"NewValues.xlsx";
             List<double> revealValues = new List<double>();
             List<bool> above49BoolValues = new List<bool>();
             List<bool> under60BoolValues = new List<bool>();
@@ -20,7 +23,9 @@ namespace PoleProject
             Excel excelFile = new Excel();
 
             FileInfo fileInfo = new FileInfo(fileName);
+            excelFile.insertColumns(fileInfo);
 
+            int savedRow = 1;
             bool run = true;
 
             while (run)
@@ -34,13 +39,13 @@ namespace PoleProject
 
                     Console.WriteLine("****************************************");
 
-                    for (int i = 0; i < northings.Count; i++)
-                    {
-                        Console.WriteLine(i);
-                        Console.WriteLine(northings[i]);
-                        Console.WriteLine(elevations[i]);
-                        Console.WriteLine("****************************************");
-                    }
+                    //for (int i = 0; i < northings.Count; i++)
+                    //{
+                    //    Console.WriteLine(i);
+                    //    Console.WriteLine(northings[i]);
+                    //    Console.WriteLine(elevations[i]);
+                    //    Console.WriteLine("****************************************");
+                    //}
 
                     //Defines an Instance of the Functions class to access Functions
                     Functions functs = new Functions(northings, elevations);
@@ -66,7 +71,11 @@ namespace PoleProject
 
                     Console.WriteLine(numberOfFalses);
 
-                    excelFile.writeExcel(fileInfo, savedRow, rowCount, revealValues);
+                    excelFile.writeExcel(fileInfo, savedRow, rowCount, revealValues, above49BoolValues, under60BoolValues);
+
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine();
                 }
                 catch (Exception e)
                 {
@@ -75,6 +84,9 @@ namespace PoleProject
                     break;
                 }
             }
+            excelFile.addExcelLabels(fileInfo, savedRow);
+
+            Console.WriteLine(savedRow);
         }
             
     }

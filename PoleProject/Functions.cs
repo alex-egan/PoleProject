@@ -197,7 +197,7 @@ namespace PoleProject
             {
                 int under49FalseCount = 0;
 
-                for (int i = 0; i < officialMinRevealValues.Count; i++)
+                for (int i = 0; i < testMinRevealValues.Count; i++)
                 {
                     if (testMinRevealValues[i] < MINREVEAL)
                     {
@@ -212,7 +212,7 @@ namespace PoleProject
 
                 if (under49FalseCount != 0)
                 {
-                    for (int i = 0; i < checkGreaterThan49Inches.Count; i++)
+                    for (int i = 0; i < testMinRevealValues.Count; i++)
                     {
                         testMinRevealValues[i] += TESTCONSTANT;
                     }
@@ -223,36 +223,64 @@ namespace PoleProject
                 }
             }
 
+            int over60FalseCount = 0;
+
+            for (int i = 0; i < testMinRevealValues.Count; i++)
+            {
+                if (testMinRevealValues[i] > MAXREVEAL)
+                {
+                    over60FalseCount++;
+                }
+            }
+
             test = true;
 
-            while (test)
+            if (over60FalseCount != 0)
             {
-                int over60FalseCount = 0;
-
-                for (int i = 0; i < officialMinRevealValues.Count; i++)
+                for (int i = 0; i < testMinRevealValues.Count; i++)
                 {
-                    if (testMinRevealValues[i] > MAXREVEAL)
+                    officialMinRevealValues[i] = testMinRevealValues[i];
+                }
+            }
+            else
+            {
+                while (test)
+                {
+                    over60FalseCount = 0;
+
+                    for (int i = 0; i < testMinRevealValues.Count; i++)
                     {
-                        checkLessThan60Inches[i] = false;
-                        over60FalseCount++; ;
+                        if (testMinRevealValues[i] > MAXREVEAL)
+                        {
+                            checkLessThan60Inches[i] = false;
+                            over60FalseCount++; ;
+                        }
+
+                        else
+                        {
+                            checkLessThan60Inches[i] = true;
+                        }
+                    }
+
+                    if (over60FalseCount != 0)
+                    {
+                        for (int i = 0; i < testMinRevealValues.Count; i++)
+                        {
+                            if (officialMinRevealValues[i] < MAXREVEAL)
+                            {
+                                checkLessThan60Inches[i] = true;
+                            }
+                        }
+                        break;
                     }
 
                     else
                     {
-                        checkLessThan60Inches[i] = true;
-                    }
-                }
-
-                if (over60FalseCount != 0)
-                {
-                    break;
-                }
-                else
-                {
-                    for (int i = 0; i < checkGreaterThan49Inches.Count; i++)
-                    {
-                        officialMinRevealValues[i] = testMinRevealValues[i];
-                        testMinRevealValues[i] += TESTCONSTANT;
+                        for (int i = 0; i < testMinRevealValues.Count; i++)
+                        {
+                            officialMinRevealValues[i] = testMinRevealValues[i];
+                            testMinRevealValues[i] += TESTCONSTANT;
+                        }
                     }
                 }
             }
