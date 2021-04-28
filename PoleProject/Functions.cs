@@ -5,6 +5,7 @@ namespace PoleProject
 {
     public class Functions
     {
+        //Defines many important variables for the methods in this class
         double sumOfStations = 0;
         double sumOfElevations = 0;
         double sumOfStationsTimesElevations = 0;
@@ -14,7 +15,7 @@ namespace PoleProject
         double yInt = 0;
         double MINREVEAL = (49.00 / 12);
         double MAXREVEAL = 5.00;
-        double TESTCONSTANT = 0.1;
+        double TESTCONSTANT = 0.05;
         List<double> stationValues = new List<double>();
         List<double> predictedYValues = new List<double>();
         List<double> minRevealValues = new List<double>();
@@ -27,91 +28,29 @@ namespace PoleProject
             List<double> elevationValues = elevations;
         }
 
-
-        //Calculate Station Values and put them in a list
-        public List<double> calculateStations(List<double> northingValues)
-        {
-            stationValues.Add(0);
-
-            for (int i = 1; i < northingValues.Count; i++)
-            {
-                stationValues.Add((northingValues[i - 1] - northingValues[i]) + stationValues[i - 1]);
-                //Console.WriteLine(stations[i]);
-            }
-
-            return stationValues;
-        }
-
-
-        //Calculates Sum of Northing Values
-        public void sumAllStations(List<double> stations)
-        {
-            for (int i = 0; i < stations.Count; i++)
-            {
-                sumOfStations += stations[i];
-            }
-
-            //Console.WriteLine("Sum of Stations: " + Convert.ToString(sumOfStations));
-        }
-
-
-        //Calculates Sum of Elevation Values
-        public void sumAllElevations(List<double> elevationValues)
+        //Runs all functions and Returns the Official Reveal Values to Be Used
+        public List<double> calculateRevealValues(List<double> northings, List<double> elevations)
         {
 
-            for (int i = 0; i < elevationValues.Count; i++)
-            {
-                sumOfElevations += elevationValues[i];
-            }
+            calculateRegressionValues(northings, elevations);
 
-            //Console.WriteLine("Sum of Elevations: " + Convert.ToString(sumOfElevations));
+            calculatePredictedYValues(elevations, stationValues, slope, yInt);
+
+            double maxResidual = calculateResiduals(predictedYValues, elevations);
+
+            List<double> minRevealValues = calculateMinRevealValues(elevations, stationValues, maxResidual, yInt, slope);
+
+            List<double> checkedRevealValues = testMinRevealValues(minRevealValues);
+
+            return checkedRevealValues;
         }
-
-
-        //Calculates the Sum of Northing Values Times Elevation Values
-        public void sumNorthingsTimesElevations(List<double> stationValues, List<double> elevationValues)
-        {
-
-
-            for (int i = 0; i < stationValues.Count; i++)
-            {
-                sumOfStationsTimesElevations += stationValues[i] * elevationValues[i];
-            }
-
-            //Console.WriteLine("Sum of Northings Times Elevations: " + Convert.ToString(sumOfStationsTimesElevations));
-        }
-
-
-        //Calculates (Sum of Northing Values)^2
-        public void sumNorthingsSquared(double sumOfStations)
-        {
-
-            sumOfStationsSquared = sumOfStations * sumOfStations;
-
-            //Console.WriteLine("Sum of Northings Squared: " + Convert.ToString(sumOfStationsSquared));
-        }
-
-
-        //Calculates Sum of (Northing Values^2)
-        public void sumSquaredNorthings(List<double> stationValues)
-        {
-
-            for (int i = 0; i < stationValues.Count; i++)
-            {
-                sumOfSquaredStations += (stationValues[i] * stationValues[i]);
-            }
-
-            //Console.WriteLine("Sum of Squared Northings: " + Convert.ToString(sumOfSquaredStations));
-        }
-
 
         //Runs all Calculations needed to find Regression Line Values
-        //Then Calculates the Slope and Y-Int of the Regression Line
+        // Then Calculates the Slope and Y-Int of the Regression Line
         public void calculateRegressionValues(List<double> northingValues, List<double> elevationValues)
         {
 
             int rowCount = northingValues.Count;
-            //Console.WriteLine("Row Count: " + Convert.ToString(rowCount));
 
             stationValues = calculateStations(northingValues);
 
@@ -127,17 +66,74 @@ namespace PoleProject
             yInt = (sumOfElevations - (slope * sumOfStations)) / (rowCount);
         }
 
+        //Calculate Station Values and put them in a list
+        public List<double> calculateStations(List<double> northingValues)
+        {
+            stationValues.Add(0);
 
-        //calculate the predicted y values
+            for (int i = 1; i < northingValues.Count; i++)
+            {
+                stationValues.Add((northingValues[i - 1] - northingValues[i]) + stationValues[i - 1]);
+            }
+
+            return stationValues;
+        }
+
+        //Calculates Sum of Northing Values
+        public void sumAllStations(List<double> stations)
+        {
+            for (int i = 0; i < stations.Count; i++)
+            {
+                sumOfStations += stations[i];
+            }
+        }
+
+
+        //Calculates Sum of Elevation Values
+        public void sumAllElevations(List<double> elevationValues)
+        {
+            for (int i = 0; i < elevationValues.Count; i++)
+            {
+                sumOfElevations += elevationValues[i];
+            }
+        }
+
+        //Calculates the Sum of Northing Values Times Elevation Values
+        public void sumNorthingsTimesElevations(List<double> stationValues, List<double> elevationValues)
+        {
+            for (int i = 0; i < stationValues.Count; i++)
+            {
+                sumOfStationsTimesElevations += stationValues[i] * elevationValues[i];
+            }
+        }
+
+        //Calculates (Sum of Northing Values)^2
+        public void sumNorthingsSquared(double sumOfStations)
+        {
+            sumOfStationsSquared = sumOfStations * sumOfStations;
+        }
+
+        //Calculates Sum of (Northing Values^2)
+        public void sumSquaredNorthings(List<double> stationValues)
+        {
+            for (int i = 0; i < stationValues.Count; i++)
+            {
+                sumOfSquaredStations += (stationValues[i] * stationValues[i]);
+            }
+        }
+
+
+
+        //calculate the predictedY values
         public void calculatePredictedYValues(List<double> elevationValues, List<double> stationValues, double slope, double yInt)
         {
 
             for (int i = 0; i < stationValues.Count; i++)
             {
                 predictedYValues.Add(stationValues[i] * slope + yInt);
-                //Console.WriteLine("predictedYValue: " + Convert.ToString(predictedYValues[i]));
             }
         }
+
 
 
         //Calculates All Residuals and Holds the Max Value
@@ -149,7 +145,6 @@ namespace PoleProject
             for (int i = 0; i < elevationValues.Count; i++)
             {
                 residuals.Add(elevationValues[i] - predictedYValues[i]);
-                //Console.WriteLine("residual: " + Convert.ToString(residuals[i]));
 
                 if (residuals[i] > maxResidual)
                 {
@@ -157,11 +152,9 @@ namespace PoleProject
                 }
 
             }
-
-            //Console.WriteLine("maxResidual: " + Convert.ToString(maxResidual));
-
             return maxResidual;
         }
+
 
 
         //Calculates the Minimum Reveal Values by finding the High Points
@@ -172,12 +165,12 @@ namespace PoleProject
             for (int i = 0; i < stationValues.Count; i++)
             {
                 minRevealValues.Add(((stationValues[i] * slope) + yInt + maxResidual + MINREVEAL) - elevationValues[i]);
-                //Console.WriteLine("minRevealValues: " + Convert.ToString(minRevealValues[i]));
             }
 
             return minRevealValues;
         }
 
+        //This method tests the MinRevealValues (Deeper Explanation throughout the method)
         public List<double> testMinRevealValues(List<double> minRevealValues)
         {
             List<double> testMinRevealValues = new List<double>();
@@ -185,6 +178,7 @@ namespace PoleProject
 
             bool test = true;
 
+            //First, all the lists are created to length and initiliazed with values.
             for (int i = 0; i < minRevealValues.Count; i++)
             {
                 testMinRevealValues.Add(minRevealValues[i]);
@@ -193,6 +187,10 @@ namespace PoleProject
                 checkGreaterThan49Inches.Add(true);
             }
 
+            //The first while loop checks to see if all the values are greater than 49 inches.
+            // If there are any values that are over 49 inches, the under49FalseCount is incremented by 1
+            // This causes all of the MinRevealValues to be incremented by the TestConstant
+            // If all the values are greater than 49 inchers, then it carries on to the next loop
             while (test == true)
             {
                 int under49FalseCount = 0;
@@ -225,6 +223,8 @@ namespace PoleProject
 
             int over60FalseCount = 0;
 
+            //This loop is a preliminary check to see if any of the values are greater than 60 inches
+            // If there are, then over60FalseCount will be nonzero
             for (int i = 0; i < testMinRevealValues.Count; i++)
             {
                 if (testMinRevealValues[i] > MAXREVEAL)
@@ -235,11 +235,19 @@ namespace PoleProject
 
             test = true;
 
+            //The final loop checks the over60FalseCount to see if any of the values are over 60 inches.
+            // If there are any, then the testMinRevealValues are assigned to officialMinRevealValues and the method ends
+            // Otherwise, the values are incremented until one of the values is over 60 inches, and the previous iteration is saved and used.
             if (over60FalseCount != 0)
             {
                 for (int i = 0; i < testMinRevealValues.Count; i++)
                 {
                     officialMinRevealValues[i] = testMinRevealValues[i];
+
+                    if (officialMinRevealValues[i] > MAXREVEAL)
+                    {
+                        checkLessThan60Inches[i] = false;
+                    }
                 }
             }
             else
@@ -288,6 +296,7 @@ namespace PoleProject
             return officialMinRevealValues;
         }
 
+        //Checks to see how many false values are in the list.
         public int numberOfFalses(List<bool> checkLessThan60Inches)
         {
             int falseCount = 0;
@@ -308,33 +317,16 @@ namespace PoleProject
             return falseCount;
         }
 
+        //Returns the checkLessThan60Inches list to the main program
         public List<bool> checkUnder60Inches(List<double> officialMinRevealValues)
         {
             return checkLessThan60Inches;
         }
 
+        //Returns the checkAbove49Inches list to the main program
         public List<bool> checkAbove49Inches(List<double> officialMinRevealValues)
         {
             return checkGreaterThan49Inches;
-        }
-
-        //Runs all functions and Returns the Official Reveal Values to Be Used
-        public List<double> calculateRevealValues(List<double> northings, List<double> elevations)
-        {
-            List<double> minRevealValues = new List<double>();
-            List<double> checkedRevealValues = new List<double>();
-
-            calculateRegressionValues(northings, elevations);
-
-            calculatePredictedYValues(elevations, stationValues, slope, yInt);
-
-            double maxResidual = calculateResiduals(predictedYValues, elevations);
-
-            minRevealValues = calculateMinRevealValues(elevations, stationValues, maxResidual, yInt, slope);
-
-            checkedRevealValues = testMinRevealValues(minRevealValues);
-
-            return checkedRevealValues;
         }
     }
 }

@@ -65,6 +65,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="ExcelFiles\Values.xlsx" />
+    <None Include="README.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ExcelFiles\" />

@@ -7,19 +7,14 @@ namespace PoleProject
 {
     public class Excel
     {
-        public Excel()
-        {
-
-        }
-
+        //Sets important variables.
+        //Only change them if they don't line up with the details of the file.
         int EASTINGSCOLUMN = 3;
         int NORTHINGSCOLUMN = 2;
         int ELEVATIONSCOLUMN = 4;
-        //string sheetName = "Stantec OG Blocks 25-27 31 37";
-        //string sheetName = "Sheet1";
-        //string sheetName = "NewValues";
-        string sheetName = "NewValues";
+        string sheetName = "Block 11_SECTION 3_OG";
 
+        //Inserts columns to which the program writes final values
         public void insertColumns(FileInfo fileInfo)
         {
             ExcelPackage package = new ExcelPackage(fileInfo);
@@ -28,6 +23,8 @@ namespace PoleProject
             worksheet.InsertColumn(8, 3);
         }
 
+        //Calculates the amount of rows that have the same easting value
+        // Used to read in the correct number of northings and elevations
         public int readEastings(System.IO.FileInfo fileInfo, int savedRow)
         {
             List<double> eastings = new List<double>();
@@ -35,17 +32,21 @@ namespace PoleProject
             ExcelPackage package = new ExcelPackage(fileInfo);
             ExcelWorksheet worksheet = package.Workbook.Worksheets[sheetName];
 
+            //Gets the value of the easting for the next iteration (the original easting)
             double eastingValue = Convert.ToDouble(worksheet.Cells[savedRow, EASTINGSCOLUMN].Value.ToString());
+
             bool iterate = true;
             int rowCount = 0;
 
+            //This while loop is responsible for looking at the next easting value in the excel file and makes sure
+            // that it is the same as the original one for this iteration. The while loop breaks when it finds an
+            // easting that is not the same as the original one
             while (iterate == true)
             {
                 double nextEastingValue;
                 try
                 {
                     nextEastingValue = Convert.ToDouble(worksheet.Cells[savedRow, EASTINGSCOLUMN].Value.ToString());
-                    //Console.WriteLine(nextEastingValue);
                 }
                 catch
                 {
@@ -61,20 +62,20 @@ namespace PoleProject
                 rowCount++;
                 savedRow++;
             }
-            //Console.WriteLine(rowCount);
-            //Console.WriteLine(savedRow);
 
             return rowCount;
         }
 
+        //Ensures that the correct value for savedRow is returned to the main program
         public int returnSavedRow(int rowCount, int savedRow)
         {
-            savedRow = savedRow + rowCount;
-            //Console.WriteLine("SavedRow: " + savedRow.ToString());
+            savedRow += rowCount;
 
             return savedRow;
         }
 
+
+        //Reads the Northing Values from the Excel File into the Program
         public List<double> readNorthings(System.IO.FileInfo fileInfo, int rowCount, int savedRow)
         {
             List<double> northings = new List<double>();
@@ -82,24 +83,17 @@ namespace PoleProject
             ExcelPackage package = new ExcelPackage(fileInfo);
             ExcelWorksheet worksheet = package.Workbook.Worksheets[sheetName];
 
-            // get number of rows and columns in the sheet
-            int rows = worksheet.Dimension.Rows; // 20
-            int columns = worksheet.Dimension.Columns; // 7
-
-            //Console.WriteLine("*******************************");
-
-            // loop through the worksheet rows and columns
+            //Loops through the rows from saved row to row count + saved row to extract the northings
             for (int i = savedRow - rowCount; i < savedRow; i++)
             {
-                double content = Convert.ToDouble(worksheet.Cells[i, NORTHINGSCOLUMN].Value.ToString());
-                northings.Add(content);
-                //Console.WriteLine(content);
-                //Console.WriteLine("*******************************");
+                double northing = Convert.ToDouble(worksheet.Cells[i, NORTHINGSCOLUMN].Value.ToString());
+                northings.Add(northing);
             }
 
             return northings;
         }
 
+        //Reads the elevation values from the Excel File to the program
         public List<double> readElevations(System.IO.FileInfo fileInfo, int rowCount, int savedRow)
         {
             List<double> elevations = new List<double>();
@@ -107,20 +101,17 @@ namespace PoleProject
             ExcelPackage package = new ExcelPackage(fileInfo);
             ExcelWorksheet worksheet = package.Workbook.Worksheets[sheetName];
 
-            //Console.WriteLine("*******************************");
-
-            // loop through the worksheet rows and columns
+            //Loops through the rows from saved row to row count + saved row to extract the elevations
             for (int i = savedRow - rowCount; i < savedRow; i++)
             {
-                double content = Convert.ToDouble(worksheet.Cells[i, ELEVATIONSCOLUMN].Value.ToString());
-                elevations.Add(content);
-                //Console.WriteLine(content);
-                //Console.WriteLine("*******************************");
+                double elevation = Convert.ToDouble(worksheet.Cells[i, ELEVATIONSCOLUMN].Value.ToString());
+                elevations.Add(elevation);
             }
 
             return elevations;
         }
 
+        //Writes the final values to the Excel File
         public void writeExcel(System.IO.FileInfo fileInfo, int savedRow, int rowCount, List<double> revealValues, List<bool> above49BoolValues, List<bool> under60BoolValues)
         {
             int row = savedRow - rowCount;
@@ -136,21 +127,6 @@ namespace PoleProject
             }
 
             package.Save();
-        }
-
-        public void addExcelLabels(FileInfo fileInfo, int savedRow)
-        {
-            ExcelPackage package = new ExcelPackage(fileInfo);
-            ExcelWorksheet worksheet = package.Workbook.Worksheets[sheetName];
-            worksheet.InsertRow(savedRow+1, 1);
-            worksheet.Cells[savedRow + 1, 1].Value = "PNTNO";
-            worksheet.Cells[savedRow + 1, 1].Value = "NORTHINGS";
-            worksheet.Cells[savedRow + 1, 1].Value = "EASTINGS";
-            worksheet.Cells[savedRow + 1, 1].Value = "ELEVATIONS";
-            worksheet.Cells[savedRow + 1, 1].Value = "DESCRIPTION";
-            worksheet.Cells[savedRow + 1, 8].Value = "Reveal Values";
-            worksheet.Cells[savedRow + 1, 9].Value = "Greater than 49 Inches";
-            worksheet.Cells[savedRow + 1, 10].Value = "Less than 60 Inches";
         }
     }
 }
